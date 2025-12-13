@@ -123,16 +123,18 @@ if __name__ == "__main__":
     train_txt = os.path.join(VOCdevkit_path, "VOC2007/ImageSets/Segmentation/train.txt")
     val_txt   = os.path.join(VOCdevkit_path, "VOC2007/ImageSets/Segmentation/val.txt")
 
+    
     if (not os.path.exists(train_txt)) or (not os.path.exists(val_txt)):
         print("\n[INFO] No encontré train.txt / val.txt todavía.")
-        print("       Esperado en:")
         print("       -", train_txt)
         print("       -", val_txt)
-        print("\n       Cuando tengas dataset en formato VOC, corre primero:")
-        print("       !python voc_annotation.py")
-        print("       y luego vuelve a ejecutar:")
-        print("       !python train.py\n")
+        print("       Primero genera los txt y luego corre train.py.\n")
         raise SystemExit(0)
+    
+    with open(train_txt, "r") as f:
+        train_lines = f.readlines()
+    with open(val_txt, "r") as f:
+        val_lines = f.readlines()
 
     num_train   = len(train_lines)
     num_val     = len(val_lines)
@@ -240,3 +242,4 @@ if __name__ == "__main__":
 
         if local_rank == 0:
             loss_history.writer.close()
+
