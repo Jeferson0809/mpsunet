@@ -14,7 +14,14 @@ import numpy as np
 
 from PIL import Image
 from tqdm import tqdm
-from torch.utils.tensorboard import SummaryWriter
+try:
+    from torch.utils.tensorboard import SummaryWriter
+    _HAS_TB = True
+except Exception as e:
+    print("[WARN] TensorBoard deshabilitado:", repr(e))
+    SummaryWriter = None
+    _HAS_TB = False
+
 from .utils import preprocess_input, resize_image
 from .utils_metrics import compute_mIoU
 
@@ -29,12 +36,14 @@ class LossHistory():
             self.val_loss   = []
         
         os.makedirs(self.log_dir)
-        self.writer     = SummaryWriter(self.log_dir)
-        try:
-            dummy_input     = torch.randn(2, 4, input_shape[0], input_shape[1])
-            self.writer.add_graph(model, dummy_input)
-        except:
-            pass
+        self.writer = SummaryWriter(self.log_dir) if _HAS_TB else None
+        if self.writer is not None:
+            try:
+                dummy_input = torch.randn(2, 4, input_shape[0], input_shape[1])
+                self.writer.add_graph(model, dummy_input)
+            except:
+                pass
+
 
     def append_loss(self, epoch, loss, val_loss = None):
         if not os.path.exists(self.log_dir):
@@ -52,9 +61,11 @@ class LossHistory():
                 f.write(str(val_loss))
                 f.write("\n")
             
-        self.writer.add_scalar('loss', loss, epoch)
-        if self.val_loss_flag:
-            self.writer.add_scalar('val_loss', val_loss, epoch)
+        if self.writer is not None:
+            self.writer.add_scalar('loss', loss, epoch)
+            if self.val_loss_flag:
+                self.writer.add_scalar('val_loss', val_loss, epoch)
+
             
         self.loss_plot()
 
