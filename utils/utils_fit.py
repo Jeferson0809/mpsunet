@@ -51,7 +51,9 @@ def fit_one_epoch(model_train, model, loss_history, eval_callback, optimizer, ep
         else:
             from torch.cuda.amp import autocast
             with autocast():
+                imgs = imgs.contiguous()
                 outputs = model_train(imgs)
+
                 if focal_loss:
                     loss = Focal_Loss(outputs, pngs, weights, num_classes = num_classes)
                 else:
@@ -211,4 +213,5 @@ def fit_one_epoch_no_val(model_train, model, loss_history, optimizer, epoch, epo
             print('Save best model to best_epoch_weights.pth')
             torch.save(model.state_dict(), os.path.join(save_dir, "best_epoch_weights.pth"))
             
+
         torch.save(model.state_dict(), os.path.join(save_dir, "last_epoch_weights.pth"))
