@@ -116,9 +116,9 @@ if __name__ == "__main__":
             model_train = model_train.cuda(local_rank)
             model_train = torch.nn.parallel.DistributedDataParallel(model_train, device_ids=[local_rank], find_unused_parameters=True)
         else:
-            model_train = torch.nn.DataParallel(model)
             cudnn.benchmark = True
-            model_train = model_train.cuda()
+            model_train = model.cuda()
+
 
     train_txt = os.path.join(VOCdevkit_path, "VOC2007/ImageSets/Segmentation/train.txt")
     val_txt   = os.path.join(VOCdevkit_path, "VOC2007/ImageSets/Segmentation/val.txt")
@@ -242,5 +242,6 @@ if __name__ == "__main__":
 
         if local_rank == 0:
             loss_history.writer.close()
+
 
 
