@@ -1,7 +1,7 @@
 import torch.nn as nn
 
 from thop import profile
-from nets.resnet import resnet50
+from torchvision.models import resnet50
 from nets.vgg import VGG16
 
 
