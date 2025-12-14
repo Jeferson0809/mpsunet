@@ -5,8 +5,8 @@ import numpy as np
 from PIL import Image
 from tqdm import tqdm
 
-trainval_percent    = 1
-train_percent       = 0.9
+trainval_percent    = 0.9
+train_percent       = 0.8888889
 VOCdevkit_path      = 'VOCdevkit'
 
 if __name__ == "__main__":
@@ -64,3 +64,4 @@ if __name__ == "__main__":
         classes_nums += np.bincount(np.reshape(png, [-1]), minlength=256)
 
     
+
