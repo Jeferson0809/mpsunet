@@ -29,9 +29,9 @@ if __name__ == "__main__":
     model_path  = ""
     input_shape = [512, 512]
     Init_Epoch          = 0
-    Freeze_Epoch        = 1
+    Freeze_Epoch        = 50
     Freeze_batch_size   = 2
-    UnFreeze_Epoch      = 1
+    UnFreeze_Epoch      = 500
     Unfreeze_batch_size = 2
     Freeze_Train        = True
     Init_lr             = 1e-4
@@ -242,6 +242,7 @@ if __name__ == "__main__":
 
         if local_rank == 0:
             loss_history.writer.close()
+
 
 
 
