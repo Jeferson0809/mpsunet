@@ -31,7 +31,7 @@ if __name__ == "__main__":
     Init_Epoch          = 0
     Freeze_Epoch        = 50
     Freeze_batch_size   = 2
-    UnFreeze_Epoch      = 500
+    UnFreeze_Epoch      = 100
     Unfreeze_batch_size = 2
     Freeze_Train        = True
     Init_lr             = 1e-4
@@ -243,6 +243,7 @@ if __name__ == "__main__":
         if local_rank == 0:
             if loss_history is not None and getattr(loss_history, "writer", None) is not None:
                 loss_history.writer.close()
+
 
 
 
