@@ -241,7 +241,10 @@ if __name__ == "__main__":
                 dist.barrier()
 
         if local_rank == 0:
+            if loss_history is not None and getattr(loss_history, "writer", None) is not None:
             loss_history.writer.close()
+
+
 
 
 
