@@ -2,7 +2,7 @@ import torch.nn as nn
 
 from thop import profile
 from torchvision.models import resnet50
-from nets.vgg import VGG16
+from .vgg import VGG16
 
 
 class unetUp(nn.Module):
