@@ -108,9 +108,9 @@ class Unet(nn.Module):
         super(Unet, self).__init__()
 
         if backbone == 'vgg':
-            # ✅ aquí está la clave
             self.vgg = VGG16(pretrained=pretrained, in_channels=in_channels)
-            in_filters = [192, 384, 768, 1024]
+            in_filters  = [192, 384, 768, 1024]
+
 
         elif backbone == "resnet50":
             # ⚠️ resnet50 NO soporta 4ch directo (ver abajo)
