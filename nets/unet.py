@@ -104,16 +104,24 @@ class PSA(nn.Module):
         return PSA_out
 
 class Unet(nn.Module):
-    def __init__(self, num_classes = 21, pretrained = False, backbone = 'vgg'):
+    def __init__(self, num_classes=21, pretrained=False, backbone='vgg', in_channels=3):
         super(Unet, self).__init__()
+
         if backbone == 'vgg':
-            self.vgg    = VGG16(pretrained = pretrained)
-            in_filters  = [192, 384, 768, 1024]
+            # ✅ aquí está la clave
+            self.vgg = VGG16(pretrained=pretrained, in_channels=in_channels)
+            in_filters = [192, 384, 768, 1024]
+
         elif backbone == "resnet50":
-            self.resnet = resnet50(pretrained = pretrained)
-            in_filters  = [192, 512, 1024, 3072]
+            # ⚠️ resnet50 NO soporta 4ch directo (ver abajo)
+            if in_channels != 3:
+                raise ValueError("resnet50 backbone requiere in_channels=3 (a menos que lo parches).")
+            self.resnet = resnet50(pretrained=pretrained)
+            in_filters = [192, 512, 1024, 3072]
+
         else:
             raise ValueError('Unsupported backbone - `{}`, Use vgg, resnet50.'.format(backbone))
+
         out_filters = [64, 128, 256, 512]
 
         self.up_concat4 = unetUp(in_filters[3], out_filters[3])
@@ -123,23 +131,23 @@ class Unet(nn.Module):
 
         if backbone == 'resnet50':
             self.up_conv = nn.Sequential(
-                nn.UpsamplingBilinear2d(scale_factor = 2), 
-                nn.Conv2d(out_filters[0], out_filters[0], kernel_size = 3, padding = 1),
+                nn.UpsamplingBilinear2d(scale_factor=2),
+                nn.Conv2d(out_filters[0], out_filters[0], kernel_size=3, padding=1),
                 nn.ReLU(),
-                nn.Conv2d(out_filters[0], out_filters[0], kernel_size = 3, padding = 1),
+                nn.Conv2d(out_filters[0], out_filters[0], kernel_size=3, padding=1),
                 nn.ReLU(),
             )
         else:
             self.up_conv = None
 
         self.final = nn.Conv2d(out_filters[0], num_classes, 1)
-
         self.backbone = backbone
 
-        self.cbma64 = CBAM(64)
+        self.cbma64  = CBAM(64)
         self.cbma128 = CBAM(128)
         self.cbma256 = CBAM(256)
         self.cbma512 = CBAM(512)
+
 
     def forward(self, inputs):
         if self.backbone == "vgg":
